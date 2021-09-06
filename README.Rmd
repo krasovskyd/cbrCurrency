@@ -1,0 +1,61 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# cbrCurrency
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The cbrCurrency package provides few functions for working with currency rates (currency to RUB as 1-to-1) from Central Bank of Russia. Most useful function is `cbr_mutate_rates()`.
+
+## Installation
+
+You can install cbrCurrency package from [GitHub](https://github.com/krasovskyd/cbrCurrency) with:
+
+``` r
+remotes::install_github('krasovskyd/cbrCurrency')
+```
+
+## Example
+
+This is a basic example which shows you how to mutate column with different currencies and date rates (use `handleNA = TRUE` if exchange rate on required date not available)
+
+```{r example}
+library(magrittr)
+library(cbrCurrency)
+
+# some toy data
+currency_df <- data.frame(stringsAsFactors = FALSE,
+
+    date = sample(seq(as.Date('2017/04/01'),
+                      as.Date('2020/01/01'), by="day"), 
+                  150),
+
+    currency = sample(c('USD', 'GBP', 'JPY', 'EUR', 'HKD',
+                        'CNY', 'CHF', 'CAD'),
+                      150,
+                      replace = TRUE)
+) %>% 
+  tibble::as_tibble() %>% 
+  dplyr::mutate(n = 1:nrow(.)) %>% 
+  dplyr::relocate('n')
+
+currency_df <- cbr_mutate_rates(currency_df, handleNA = TRUE)
+currency_df
+```
+
+## Issues
+
+If you find bug please force this in Issues or sent feedback on <krasovsky.d.a@gmail.com>
